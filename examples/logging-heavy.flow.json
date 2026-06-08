@@ -1,0 +1,21 @@
+﻿{
+  "_comment": "Purpose: Logger nodes inserted at every stage for maximum execution traceability.",
+  "version": "1.0.0",
+  "name": "Logging Heavy",
+  "initial_input": "Explain quantum entanglement.",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "required": true } },
+    { "id": "log1", "type": "logger", "config": { "label": "Pre-normalise" } },
+    { "id": "normaliser", "type": "normaliser", "config": { "strip": true, "template": "User asked: {input}" } },
+    { "id": "log2", "type": "logger", "config": { "label": "Pre-model" } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "response_mode": "valid_json" } },
+    { "id": "log3", "type": "logger", "config": { "label": "Output" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "log1" },
+    { "source": "log1", "target": "normaliser" },
+    { "source": "normaliser", "target": "log2" },
+    { "source": "log2", "target": "model" },
+    { "source": "model", "target": "log3" }
+  ]
+}

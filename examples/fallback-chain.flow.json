@@ -1,0 +1,19 @@
+﻿{
+  "_comment": "Purpose: Model configured to timeout, with a fallback node providing a safe default.",
+  "version": "1.0.0",
+  "name": "Fallback Chain",
+  "initial_input": "Summarise this article.",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "required": true } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "response_mode": "timeout" } },
+    { "id": "schema_val", "type": "schema_validator", "config": { "json_schema": { "required": ["answer"] } } },
+    { "id": "fallback", "type": "fallback", "config": { "fallback_response": "Service temporarily unavailable." } },
+    { "id": "logger", "type": "logger", "config": { "label": "Output" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "model" },
+    { "source": "model", "target": "schema_val" },
+    { "source": "schema_val", "target": "fallback" },
+    { "source": "fallback", "target": "logger" }
+  ]
+}

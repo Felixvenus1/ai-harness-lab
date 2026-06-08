@@ -1,0 +1,6 @@
+﻿{
+  "_comment": "Purpose: Define JSON Schema stub for API execution request payloads.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Execution Request Schema Stub",
+  "type": "object"
+}

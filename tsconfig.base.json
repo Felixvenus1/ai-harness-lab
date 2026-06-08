@@ -1,0 +1,12 @@
+﻿{
+  "_comment": "Purpose: Provide shared TypeScript compiler defaults for workspace packages.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  }
+}

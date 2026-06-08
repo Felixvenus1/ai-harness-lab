@@ -1,0 +1,4 @@
+﻿# Purpose: Register workspace package locations for pnpm monorepo tooling.
+packages:
+  - apps/*
+  - packages/*

@@ -1,0 +1,19 @@
+{
+  "_comment": "Flow: safe customer support — input blocks profanity/PII, normalise, model, validate schema, log.",
+  "version": "1.0.0",
+  "name": "Safe Customer Support",
+  "initial_input": "I need help with my account",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "block_profanity": true, "block_pii": true } },
+    { "id": "normaliser", "type": "normaliser", "config": { "strip": true, "lowercase": true } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "response_mode": "json" } },
+    { "id": "schema_validator", "type": "schema_validator", "config": { "schema": { "type": "object", "properties": { "response": { "type": "string" } }, "required": ["response"] }, "on_failure": "fail" } },
+    { "id": "logger", "type": "logger", "config": { "label": "Support Response" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "normaliser" },
+    { "source": "normaliser", "target": "model" },
+    { "source": "model", "target": "schema_validator" },
+    { "source": "schema_validator", "target": "logger" }
+  ]
+}

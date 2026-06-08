@@ -1,0 +1,10 @@
+﻿{
+  "_comment": "Purpose: Configure task pipeline and caching behavior for monorepo commands.",
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "dev": { "cache": false, "persistent": true },
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "lint": { "dependsOn": ["^lint"] },
+    "test": { "dependsOn": ["^test"] }
+  }
+}

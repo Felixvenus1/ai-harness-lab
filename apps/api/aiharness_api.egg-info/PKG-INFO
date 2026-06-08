@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: aiharness-api
+Version: 0.0.0
+Summary: AI Harness Lab API scaffold
+Requires-Python: >=3.12
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: pydantic>=2.9.0
+Requires-Dist: uvicorn>=0.30.0

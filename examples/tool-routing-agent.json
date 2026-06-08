@@ -1,0 +1,17 @@
+{
+  "_comment": "Flow: tool routing agent — model may call tools; fallback retries once on malformed tool JSON.",
+  "version": "1.0.0",
+  "name": "Tool Routing Agent",
+  "initial_input": "Generate a JSON tool_call to lookup user by id",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "required": true } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "tool_calls": true, "response_mode": "json" } },
+    { "id": "fallback", "type": "fallback", "config": { "retries": 1, "retry_on": "tool_call_malformed" } },
+    { "id": "logger", "type": "logger", "config": { "label": "Tool Agent Output" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "model" },
+    { "source": "model", "target": "fallback" },
+    { "source": "fallback", "target": "logger" }
+  ]
+}

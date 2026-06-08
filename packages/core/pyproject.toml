@@ -1,0 +1,16 @@
+# Purpose: Define Python package metadata for the shared harness core contracts.
+[project]
+name = "harness-core"
+version = "0.1.0"
+description = "Shared node types, flow schemas, execution models, and provider contract"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.7.0"
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["harness_core*"]

@@ -1,0 +1,9 @@
+﻿{
+  "_comment": "Purpose: Configure TypeScript settings for the shared core contracts package.",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

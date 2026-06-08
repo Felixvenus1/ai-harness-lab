@@ -1,0 +1,9 @@
+﻿{
+  "_comment": "Purpose: Configure TypeScript settings for Node-side Vite configuration files.",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext"
+  },
+  "include": ["vite.config.ts"]
+}

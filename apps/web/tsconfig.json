@@ -1,0 +1,10 @@
+﻿{
+  "_comment": "Purpose: Configure TypeScript compilation for browser-targeted web source files.",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "baseUrl": "."
+  },
+  "include": ["src"]
+}

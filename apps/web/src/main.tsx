@@ -1,0 +1,12 @@
+﻿// Purpose: Bootstrap React and mount the root application component.
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "reactflow/dist/style.css";
+import "./styles.css";
+import App from "./App";
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

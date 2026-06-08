@@ -1,0 +1,17 @@
+﻿{
+  "_comment": "Purpose: Minimal flow — validate input, normalise, call mock model, log output.",
+  "version": "1.0.0",
+  "name": "Basic Chat",
+  "initial_input": "Tell me a joke",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "required": true, "min_length": 3 } },
+    { "id": "normaliser", "type": "normaliser", "config": { "strip": true, "lowercase": false } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "response_mode": "valid_json" } },
+    { "id": "logger", "type": "logger", "config": { "label": "Output" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "normaliser" },
+    { "source": "normaliser", "target": "model" },
+    { "source": "model", "target": "logger" }
+  ]
+}

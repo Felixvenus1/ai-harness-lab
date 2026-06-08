@@ -1,0 +1,13 @@
+{
+  "_comment": "Purpose: Define shared core package metadata, scripts, and dependencies.",
+  "name": "@aiharness/core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "echo build-stub",
+    "lint": "echo lint-stub",
+    "test": "echo test-stub"
+  }
+}

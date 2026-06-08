@@ -1,0 +1,17 @@
+{
+  "_comment": "Flow: strict JSON extractor — validates input, model, schema validation, then log.",
+  "version": "1.0.0",
+  "name": "Strict JSON Extractor",
+  "initial_input": "{\"text\": \"{\\\"name\\\": \\\"Alice\\\", \\\"age\\\": 30}\"}",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "required": true } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "response_mode": "json" } },
+    { "id": "schema_validator", "type": "schema_validator", "config": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "age": { "type": "number" } }, "required": ["name","age"], "additionalProperties": false } , "on_failure": "fail" } },
+    { "id": "logger", "type": "logger", "config": { "label": "Extracted JSON" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "model" },
+    { "source": "model", "target": "schema_validator" },
+    { "source": "schema_validator", "target": "logger" }
+  ]
+}

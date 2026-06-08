@@ -1,0 +1,18 @@
+# Purpose: Define Python package metadata and dependencies for the FastAPI API app.
+[project]
+name = "aiharness-api"
+version = "0.0.0"
+description = "AI Harness Lab API scaffold"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115.0",
+  "pydantic>=2.9.0",
+  "uvicorn>=0.30.0"
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]

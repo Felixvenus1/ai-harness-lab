@@ -1,0 +1,19 @@
+﻿{
+  "_comment": "Purpose: Full pipeline with strict JSON schema validation after the model call.",
+  "version": "1.0.0",
+  "name": "Strict Schema",
+  "initial_input": "What is the answer to life?",
+  "nodes": [
+    { "id": "validator", "type": "input_validator", "config": { "required": true } },
+    { "id": "normaliser", "type": "normaliser", "config": { "strip": true } },
+    { "id": "model", "type": "model", "config": { "provider": "mock", "response_mode": "valid_json" } },
+    { "id": "schema_val", "type": "schema_validator", "config": { "json_schema": { "required": ["answer"] } } },
+    { "id": "logger", "type": "logger", "config": { "label": "Output" } }
+  ],
+  "edges": [
+    { "source": "validator", "target": "normaliser" },
+    { "source": "normaliser", "target": "model" },
+    { "source": "model", "target": "schema_val" },
+    { "source": "schema_val", "target": "logger" }
+  ]
+}

@@ -1,0 +1,144 @@
+﻿/* Purpose: Define global styles, Tailwind v3 base, and ReactFlow dark-theme overrides. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body,
+#root {
+  height: 100vh;
+  overflow: hidden;
+  background-color: #09090b; /* zinc-950 */
+  color: #f4f4f5; /* zinc-100 */
+}
+
+/* ── ReactFlow dark overrides ─────────────────────────────── */
+.react-flow__pane {
+  background-color: #09090b;
+}
+
+.react-flow__background pattern circle {
+  fill: #27272a; /* zinc-800 dots */
+}
+
+.react-flow__edge-path,
+.react-flow__edge-interaction {
+  stroke: #52525b; /* zinc-600 */
+  stroke-width: 1.5;
+}
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #2dd4bf; /* teal-400 */
+}
+
+.react-flow__connection-path {
+  stroke: #2dd4bf;
+  stroke-width: 1.5;
+}
+
+.react-flow__controls {
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background-color: #18181b;
+  border-bottom: 1px solid #3f3f46;
+  color: #a1a1aa;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #27272a;
+}
+
+.react-flow__controls-button svg {
+  fill: #a1a1aa;
+}
+
+.react-flow__minimap {
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(9, 9, 11, 0.7);
+}
+
+
+:root {
+  color-scheme: dark;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body,
+#root {
+  height: 100vh;
+  overflow: hidden;
+  background-color: #09090b; /* zinc-950 */
+  color: #f4f4f5; /* zinc-100 */
+}
+
+/* ── ReactFlow dark overrides ─────────────────────────────── */
+.react-flow__pane {
+  background-color: #09090b;
+}
+
+.react-flow__background pattern circle {
+  fill: #27272a; /* zinc-800 dots */
+}
+
+.react-flow__edge-path,
+.react-flow__edge-interaction {
+  stroke: #52525b; /* zinc-600 */
+  stroke-width: 1.5;
+}
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #2dd4bf; /* teal-400 */
+}
+
+.react-flow__connection-path {
+  stroke: #2dd4bf;
+  stroke-width: 1.5;
+}
+
+.react-flow__controls {
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background-color: #18181b;
+  border-bottom: 1px solid #3f3f46;
+  color: #a1a1aa;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #27272a;
+}
+
+.react-flow__controls-button svg {
+  fill: #a1a1aa;
+}
+
+.react-flow__minimap {
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(9, 9, 11, 0.7);
+}
+

@@ -1,0 +1,15 @@
+{
+  "_comment": "Flow: fallback chain — primary mock provider, secondary mock provider with different config, then logger.",
+  "version": "1.0.0",
+  "name": "Fallback Chain Example",
+  "initial_input": "Fetch latest status",
+  "nodes": [
+    { "id": "model_primary", "type": "model", "config": { "provider": "mock", "mock_variant": "primary", "response_mode": "text" } },
+    { "id": "fallback_secondary", "type": "fallback", "config": { "secondary_provider": "mock", "secondary_config": { "mock_variant": "secondary" } } },
+    { "id": "logger", "type": "logger", "config": { "label": "Fallback Result" } }
+  ],
+  "edges": [
+    { "source": "model_primary", "target": "fallback_secondary" },
+    { "source": "fallback_secondary", "target": "logger" }
+  ]
+}
