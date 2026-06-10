@@ -1,6 +1,7 @@
-﻿"""Purpose: Expose POST /run — executes a FlowGraph with optional guardrails and tracing."""
+"""Purpose: POST /run — execute a FlowGraph with guardrails, async parallel branches, and tracing."""
 from __future__ import annotations
 
+import logging
 import time
 from datetime import datetime, timezone
 from typing import Any
@@ -17,43 +18,48 @@ from app.guardrails.storage import list_policies, log_violation
 from app.observability.collector import TraceCollector
 from app.observability.models import SpanKind, SpanStatus
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(tags=["execute"])
 
 
 class RunRequest(BaseModel):
-    """Execution request — wraps the flow graph with optional policy overrides."""
-
     graph: FlowGraph
-    # If non-empty, use exactly these policies instead of the persisted defaults.
     policy_overrides: list[PolicyConfig] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class RunResponse(BaseModel):
-    """Execution response — includes the execution trace plus the observability trace_id."""
-
     trace: ExecutionTrace
     trace_id: str
     guardrail_result: GuardrailResult | None = None
 
 
 @router.post("/run", response_model=RunResponse)
-def run_flow(req: RunRequest) -> RunResponse:
-    """Execute a flow graph, apply guardrails, record a trace, and return results."""
-    graph = req.graph
-    policies = req.policy_overrides if req.policy_overrides else list_policies()
-    enabled_policies = [p for p in policies if p.enabled]
+async def run_flow(req: RunRequest) -> RunResponse:
+    """Execute a flow graph asynchronously, apply guardrails, record a trace."""
+    try:
+        logger.info(f"Starting /run with graph: {req.graph.id}")
+        graph = req.graph
+        policies = req.policy_overrides if req.policy_overrides else list_policies()
+        enabled_policies = [p for p in policies if p.enabled]
+        logger.info(f"Loaded {len(enabled_policies)} enabled policies")
 
-    collector = TraceCollector(
-        flow_id=graph.id,
-        flow_name=graph.name,
-        harness_version="1.0",
-    )
-    collector.trace.metadata.update(req.metadata)
+        collector = TraceCollector(
+            flow_id=graph.id,
+            flow_name=graph.name,
+            harness_version="1.0",
+        )
+        collector.trace.metadata.update(req.metadata)
+        logger.info(f"Created trace collector: {collector.trace_id}")
 
-    engine = GuardrailEngine(enabled_policies) if enabled_policies else None
+        engine = GuardrailEngine(enabled_policies) if enabled_policies else None
+        logger.debug("Guardrail engine initialized")
+    except Exception as exc:
+        logger.error(f"Error initializing /run: {exc}", exc_info=True)
+        raise
 
-    # --- Pre-execution input guardrail ---
+    # ── Pre-execution input guardrail ────────────────────────────────────────
     input_guardrail: GuardrailResult | None = None
     if engine is not None:
         grd_start = datetime.now(timezone.utc)
@@ -91,13 +97,19 @@ def run_flow(req: RunRequest) -> RunResponse:
                 },
             )
 
-    # --- Execute flow ---
+    # ── Execute flow (async, parallel branches) ──────────────────────────────
     try:
-        exec_trace = FlowExecutor(graph, collector=collector).run()
+        logger.debug(f"Starting flow execution with {len(graph.nodes)} nodes")
+        exec_trace = await FlowExecutor(graph, collector=collector).run()
+        logger.info(f"Flow execution completed: passed={exec_trace.passed}, duration={exec_trace.total_duration_ms}ms")
     except FlowExecutionError as exc:
+        logger.error(f"Flow execution error: {exc}", exc_info=True)
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.error(f"Unexpected error during flow execution: {exc}", exc_info=True)
+        raise
 
-    # --- Post-execution output guardrail ---
+    # ── Post-execution output guardrail ──────────────────────────────────────
     output_guardrail: GuardrailResult | None = None
     if engine is not None:
         grd_start = datetime.now(timezone.utc)
@@ -135,25 +147,32 @@ def run_flow(req: RunRequest) -> RunResponse:
                 },
             )
 
-    # --- Finalize and persist trace ---
-    guardrail_summary: list[dict] = []
-    if input_guardrail:
-        guardrail_summary += [d.model_dump() for d in input_guardrail.decisions if d.triggered]
-    if output_guardrail:
-        log_violation(collector.trace_id, [d for d in output_guardrail.decisions if d.triggered])
-        guardrail_summary += [d.model_dump() for d in output_guardrail.decisions if d.triggered]
+    # ── Finalize and persist trace ────────────────────────────────────────────
+    try:
+        guardrail_summary: list[dict] = []
+        if input_guardrail:
+            guardrail_summary += [d.model_dump() for d in input_guardrail.decisions if d.triggered]
+        if output_guardrail:
+            log_violation(collector.trace_id, [d for d in output_guardrail.decisions if d.triggered])
+            guardrail_summary += [d.model_dump() for d in output_guardrail.decisions if d.triggered]
 
-    collector.finalize(
-        final_output=exec_trace.final_output,
-        passed=exec_trace.passed,
-        total_latency_ms=exec_trace.total_duration_ms,
-        guardrail_blocked=False,
-        guardrail_summary=guardrail_summary,
-    )
+        logger.debug("Finalizing trace")
+        collector.finalize(
+            final_output=exec_trace.final_output,
+            passed=exec_trace.passed,
+            total_latency_ms=exec_trace.total_duration_ms,
+            guardrail_blocked=False,
+            guardrail_summary=guardrail_summary,
+        )
+        logger.info(f"Trace finalized successfully: {collector.trace_id}")
 
-    combined_guardrail = output_guardrail or input_guardrail
-    return RunResponse(
-        trace=exec_trace,
-        trace_id=collector.trace_id,
-        guardrail_result=combined_guardrail,
-    )
+        response = RunResponse(
+            trace=exec_trace,
+            trace_id=collector.trace_id,
+            guardrail_result=output_guardrail or input_guardrail,
+        )
+        logger.debug(f"RunResponse created successfully")
+        return response
+    except Exception as exc:
+        logger.error(f"Error finalizing response: {exc}", exc_info=True)
+        raise
