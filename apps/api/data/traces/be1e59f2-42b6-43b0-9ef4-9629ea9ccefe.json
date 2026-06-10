@@ -1,0 +1,128 @@
+{
+  "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+  "run_id": "73d082c6-595d-493d-a836-7ffc3dfbe403",
+  "flow_id": null,
+  "flow_name": "Safe Customer Support",
+  "harness_version": "1.0",
+  "started_at": "2026-06-09T17:56:55.536789Z",
+  "ended_at": "2026-06-09T17:56:55.688789Z",
+  "total_latency_ms": 152.0,
+  "spans": [
+    {
+      "span_id": "75879d8a-957d-4208-bfd0-76d4895a10d4",
+      "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "input_guardrail",
+      "started_at": "2026-06-09T17:56:55.536789Z",
+      "ended_at": "2026-06-09T17:56:55.538789Z",
+      "latency_ms": 2.1,
+      "input": "Hello, can you help me reset my password?",
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "d49c84d7-a2c7-487c-9463-f107db9af345",
+      "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+      "parent_span_id": null,
+      "kind": "validation",
+      "name": "input_validator:v1",
+      "started_at": "2026-06-09T17:56:55.539789Z",
+      "ended_at": "2026-06-09T17:56:55.540789Z",
+      "latency_ms": 1.0,
+      "input": "Hello, can you help me reset my password?",
+      "output": "Hello, can you help me reset my password?",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "87f67cb8-ce4a-4483-b1d4-90cde845553a",
+      "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+      "parent_span_id": null,
+      "kind": "model_call",
+      "name": "model:m1",
+      "started_at": "2026-06-09T17:56:55.541789Z",
+      "ended_at": "2026-06-09T17:56:55.681789Z",
+      "latency_ms": 140.0,
+      "input": "Hello, can you help me reset my password?",
+      "output": "{\"answer\": \"Sure! Go to Settings > Security > Reset Password.\", \"confidence\": 0.95}",
+      "status": "success",
+      "error": null,
+      "input_tokens": 12,
+      "output_tokens": 18,
+      "cost_usd": 0.000014,
+      "metadata": {}
+    },
+    {
+      "span_id": "16af793b-7b26-4b79-ba9d-6a3c576880ea",
+      "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+      "parent_span_id": null,
+      "kind": "validation",
+      "name": "schema_validator:s1",
+      "started_at": "2026-06-09T17:56:55.682789Z",
+      "ended_at": "2026-06-09T17:56:55.683789Z",
+      "latency_ms": 1.0,
+      "input": "{\"answer\": \"Sure! Go to Settings > Security > Reset Password.\", \"confidence\": 0.95}",
+      "output": {
+        "answer": "Sure! Go to Settings > Security > Reset Password.",
+        "confidence": 0.95
+      },
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "d6e10f49-896c-44c1-8032-b1f2223f19c9",
+      "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "output_guardrail",
+      "started_at": "2026-06-09T17:56:55.684789Z",
+      "ended_at": "2026-06-09T17:56:55.686789Z",
+      "latency_ms": 2.0,
+      "input": {
+        "answer": "Sure! Go to Settings > Security > Reset Password.",
+        "confidence": 0.95
+      },
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": []
+      }
+    }
+  ],
+  "final_output": {
+    "answer": "Sure! Go to Settings > Security > Reset Password.",
+    "confidence": 0.95
+  },
+  "passed": true,
+  "trajectory_score": {
+    "total_steps": 5,
+    "tool_call_count": 0,
+    "retry_count": 0,
+    "failed_span_rate": 0.0,
+    "blocked_span_rate": 0.0,
+    "median_step_latency_ms": 2.0,
+    "p95_step_latency_ms": 140.0,
+    "sample_note": "p95 latency estimated from max (5 spans; reliable p95 needs ≥20)."
+  },
+  "guardrail_blocked": false,
+  "guardrail_summary": [],
+  "metadata": {}
+}

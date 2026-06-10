@@ -1,7 +1,8 @@
 """Purpose: Define Pydantic schemas for flow graphs, node config, and execution results."""
 from __future__ import annotations
 
-from typing import Any
+from datetime import datetime
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -86,3 +87,76 @@ class ExecutionTrace(BaseModel):
     final_output: Any = None
     results: list[ExecutionResult] = Field(default_factory=list)
     total_duration_ms: float = 0.0
+
+
+# ---------------------------------------------------------------------------
+# Evaluation module schemas (FR-12)
+# ---------------------------------------------------------------------------
+
+
+class DatasetSchema(BaseModel):
+    """Metadata about an uploaded evaluation dataset."""
+
+    id: str
+    name: str
+    input_field: str
+    reference_field: str
+    label_field: Optional[str] = None
+    group_field: Optional[str] = None
+    row_count: int
+
+
+class EvaluationRecord(BaseModel):
+    """Per-row result produced by the benchmark runner."""
+
+    row_id: str
+    input: str
+    reference: str
+    output: str
+    group: Optional[str] = None
+    latency_ms: float
+    input_tokens: int
+    output_tokens: int
+    cost_usd: float
+    scores: dict[str, float] = Field(default_factory=dict)
+    judge_score: Optional[float] = None
+    judge_explanation: Optional[str] = None
+    error: Optional[str] = None
+
+
+class BenchmarkRun(BaseModel):
+    """A complete benchmark run over a dataset."""
+
+    id: str
+    harness_id: str
+    dataset_id: str
+    timestamp: datetime
+    row_count: int
+    metrics_config: list[str] = Field(default_factory=list)
+    records: list[EvaluationRecord] = Field(default_factory=list)
+    summary: dict[str, Any] = Field(default_factory=dict)
+
+
+class BayesianResult(BaseModel):
+    """Result of Bayesian comparison between two benchmark runs."""
+
+    metric: str
+    run_a_id: str
+    run_b_id: str
+    posterior_a: dict[str, Any] = Field(default_factory=dict)
+    posterior_b: dict[str, Any] = Field(default_factory=dict)
+    prob_a_superior: float
+    expected_uplift: float
+    uplift_hpdr_90: tuple[float, float]
+    rope_probability: float
+
+
+class JudgeConfig(BaseModel):
+    """Configuration for an LLM judge."""
+
+    judge_provider: str
+    judge_model: str
+    mode: Literal["pointwise", "pairwise", "jury"]
+    rubric: str
+    scale: Literal["binary", "1-5", "0-10"]
+    jury_models: Optional[list[str]] = None

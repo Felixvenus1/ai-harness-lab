@@ -1,0 +1,14 @@
+{
+  "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+  "run_id": null,
+  "signal": "thumbs_down",
+  "categories": [
+    "incomplete",
+    "bad_format"
+  ],
+  "note": "Response was missing the link to the reset page.",
+  "harness_version": "1.0",
+  "model_version": "mock-1.0",
+  "feedback_id": "05ff235d-7c2d-46a4-b16e-594fc20bac6f",
+  "created_at": "2026-06-09T17:56:56.542371Z"
+}

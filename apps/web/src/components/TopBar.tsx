@@ -1,7 +1,7 @@
 ﻿// Purpose: Render the top navigation bar with flow name, initial input, and run controls.
 
 import type { JSX } from "react";
-import { Play, Loader2 } from "lucide-react";
+import { Play, Loader2, BarChart2, Activity } from "lucide-react";
 import type { RunStatus } from "../hooks/useExecutionTrace";
 
 interface TopBarProps {
@@ -11,6 +11,8 @@ interface TopBarProps {
   onInitialInputChange: (v: string) => void;
   onRun: () => void;
   runStatus: RunStatus;
+  onOpenEvaluation?: () => void;
+  onOpenObservability?: () => void;
 }
 
 export function TopBar({
@@ -20,6 +22,8 @@ export function TopBar({
   onInitialInputChange,
   onRun,
   runStatus,
+  onOpenEvaluation,
+  onOpenObservability,
 }: TopBarProps): JSX.Element {
   const running = runStatus === "running";
 
@@ -62,6 +66,30 @@ export function TopBar({
         <span className="text-xs text-red-400 tabular-nums">● Error</span>
       )}
 
+      {/* Observability button */}
+      {onOpenObservability && (
+        <button
+          type="button"
+          onClick={onOpenObservability}
+          className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1.5 rounded transition-colors"
+        >
+          <Activity size={13} />
+          Observe
+        </button>
+      )}
+
+      {/* Evaluation button */}
+      {onOpenEvaluation && (
+        <button
+          type="button"
+          onClick={onOpenEvaluation}
+          className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1.5 rounded transition-colors"
+        >
+          <BarChart2 size={13} />
+          Evaluate
+        </button>
+      )}
+
       {/* Run button */}
       <button
         type="button"
@@ -75,3 +103,4 @@ export function TopBar({
     </header>
   );
 }
+

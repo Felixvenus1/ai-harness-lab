@@ -1,0 +1,8 @@
+{
+  "policy_id": "policy-danger-block",
+  "name": "Dangerous Intent Block",
+  "type": "dangerous_intent",
+  "action": "block",
+  "enabled": true,
+  "params": {}
+}

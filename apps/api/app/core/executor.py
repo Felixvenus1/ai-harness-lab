@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import json
 import time
-from typing import Any
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any
 
 from harness_core.node_types import NodeType
 from harness_core.schemas import (
@@ -15,6 +16,21 @@ from harness_core.schemas import (
 
 from app.providers.mock_provider import ProviderTimeoutError
 from app.providers.registry import get_provider
+
+if TYPE_CHECKING:
+    from app.observability.collector import TraceCollector
+
+# Map node types to observability span kinds.
+from app.observability.models import SpanKind, SpanStatus
+
+_NODE_SPAN_KIND: dict[NodeType, SpanKind] = {
+    NodeType.INPUT_VALIDATOR: SpanKind.VALIDATION,
+    NodeType.NORMALISER: SpanKind.GENERAL,
+    NodeType.MODEL: SpanKind.MODEL_CALL,
+    NodeType.SCHEMA_VALIDATOR: SpanKind.VALIDATION,
+    NodeType.FALLBACK: SpanKind.FALLBACK,
+    NodeType.LOGGER: SpanKind.GENERAL,
+}
 
 # Crude signal words used by the safety check on model output.
 _UNSAFE_MARKERS = ("dangerous weapon", "build a bomb", "make a weapon")
@@ -59,8 +75,13 @@ def _topological_order(graph: FlowGraph) -> list[FlowNode]:
 class FlowExecutor:
     """Executes a FlowGraph and produces an ExecutionTrace."""
 
-    def __init__(self, graph: FlowGraph) -> None:
+    def __init__(
+        self,
+        graph: FlowGraph,
+        collector: "TraceCollector | None" = None,
+    ) -> None:
         self.graph = graph
+        self.collector = collector
 
     def run(self) -> ExecutionTrace:
         ordered = _topological_order(self.graph)
@@ -71,16 +92,20 @@ class FlowExecutor:
         total = 0.0
 
         for node in ordered:
+            started_at = datetime.now(timezone.utc)
             started = time.perf_counter()
             node_input = current
             try:
                 output, passed = self._run_node(node, node_input, previous_passed)
                 error = None
+                span_status = SpanStatus.SUCCESS if passed else SpanStatus.FAILURE
             except Exception as exc:  # noqa: BLE001 - surfaced into the trace
                 output, passed, error = node_input, False, str(exc)
+                span_status = SpanStatus.FAILURE
 
             duration = (time.perf_counter() - started) * 1000.0
             total += duration
+            ended_at = datetime.now(timezone.utc)
 
             results.append(
                 ExecutionResult(
@@ -93,6 +118,20 @@ class FlowExecutor:
                     duration_ms=round(duration, 3),
                 )
             )
+
+            # Emit a span to the collector when one is attached.
+            if self.collector is not None:
+                kind = _NODE_SPAN_KIND.get(node.type, SpanKind.GENERAL)
+                self.collector.add_span(
+                    kind=kind,
+                    name=f"{node.type.value}:{node.id}",
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    input=node_input,
+                    output=output,
+                    status=span_status,
+                    error=error,
+                )
 
             current = output
             previous_passed = passed

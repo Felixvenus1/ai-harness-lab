@@ -1,0 +1,11 @@
+{
+  "trace_id": "be1e59f2-42b6-43b0-9ef4-9629ea9ccefe",
+  "run_id": null,
+  "signal": "thumbs_up",
+  "categories": [],
+  "note": "Very helpful, answered immediately.",
+  "harness_version": "1.0",
+  "model_version": "mock-1.0",
+  "feedback_id": "9fbddc70-e75c-44d3-b3df-869aad6091ba",
+  "created_at": "2026-06-09T17:56:55.542371Z"
+}

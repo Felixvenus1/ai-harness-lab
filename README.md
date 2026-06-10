@@ -77,3 +77,127 @@ Contributing notes
 
 License: See `LICENSE` in the repository root.
 
+---
+
+## Observability / Trajectory Layer
+
+Every `/run` call now creates a **Trace** — a structured record of every step the flow took.
+
+### What is captured
+- A `Trace` wraps an ordered list of `Span` objects. Each span records:
+  - `kind` — `model_call | tool_call | retrieval | validation | guardrail | fallback | retry | general`
+  - `started_at / ended_at / latency_ms`
+  - `input / output` (verbatim, not summarised)
+  - `status` — `success | failure | blocked | redacted | retried`
+  - `error` (if any)
+  - `input_tokens / output_tokens / cost_usd` (for model calls)
+- A `TrajectoryScore` is computed automatically:
+  - total steps, tool-call count, retry count
+  - failed-span rate, blocked-span rate
+  - median and p95 step latency (with honest uncertainty note when n < 20)
+
+### Storage
+Traces are written as JSON to `apps/api/data/traces/{trace_id}.json`.
+
+### API
+- `GET /traces` — list summaries (newest first)
+- `GET /traces/{trace_id}` — full trace including all spans and trajectory score
+
+### UI
+Click **Observe** in the top bar to open the Observability workbench.  
+The **Traces** tab shows a span tree for each run. Expand any span to inspect its input, output, and error.  
+After inspecting a trace, submit feedback directly below the span tree.
+
+### Seed examples
+```
+python scripts/seed_observability.py
+```
+
+---
+
+## Feedback / Dataset Loop
+
+Users can give a thumbs-up or thumbs-down on any trace and optionally tag it with a category (`incorrect | unsafe | incomplete | slow | bad_format | hallucination | other`).
+
+### API
+- `POST /feedback` — submit feedback against a `trace_id`
+- `GET /feedback` — list feedback (filter by signal or harness_version)
+- `GET /feedback/stats` — aggregate thumbs-up rate, thumbs-down rate, category frequency, per-version breakdown
+- `POST /feedback/regression-datasets` — convert selected feedback items into a regression dataset
+- `GET /feedback/regression-datasets/{id}/export?format=json|csv` — download
+
+### Regression datasets
+When you create a regression dataset from feedback, each row preserves:
+- original trace input and model output
+- feedback signal and categories
+- harness version, model version
+- trajectory score from the original trace
+
+This lets you re-run failed or flagged traces against new model versions as a proper regression suite.
+
+### UI
+Click **Observe → Feedback** to:
+- See thumbs-up/down rates and category breakdown
+- Select negative-feedback rows and create a named regression dataset
+- Download existing regression datasets as JSON or CSV
+
+---
+
+## Policy Guardrail Engine
+
+The guardrail engine runs **before** the model call (on the user input) and **after** the model call (on the model output). Both pre- and post-inference checks are recorded as `guardrail` spans in the trace.
+
+### Built-in policy types
+| Type | What it detects |
+|---|---|
+| `pii` | Emails, phone numbers, SSNs, credit cards, IPs |
+| `hate` | Slurs, threats, dehumanising phrases |
+| `dangerous_intent` | Weapons, explosives, drug synthesis, cyberattack requests |
+| `prompt_injection` | Classic "ignore previous instructions" patterns |
+| `output_format` | JSON validity, required fields, max length |
+| `sensitive_redaction` | Custom term list (supply via `params.terms`) |
+
+### Policy actions
+- `allow` — pass through unchanged
+- `warn` — pass through but record the decision
+- `block` — return a structured `GUARDRAIL_BLOCKED` error with explanation (no raw error to the user)
+- `redact` — replace sensitive tokens before passing to the next step
+
+### Composability
+The engine accepts an ordered list of `PolicyConfig` objects. Policies are applied left-to-right; redaction from an earlier policy is seen by later ones. The most-severe action across all triggered policies wins.
+
+### API
+- `GET /guardrails/policies` — list configured policies
+- `POST /guardrails/policies` — create a policy
+- `PUT /guardrails/policies/{id}` — update (full replacement)
+- `DELETE /guardrails/policies/{id}` — remove
+- `POST /guardrails/check` — ad-hoc check of arbitrary text against enabled policies
+- `GET /guardrails/stats` — block rate by type, redact rate, warn rate, review-queue size
+
+### UI
+Click **Observe → Guardrails** to:
+- Toggle policies on/off
+- Add new policies (choose type and action from dropdowns)
+- Run an ad-hoc check and see per-policy decisions
+- View aggregate block/redact/warn statistics
+
+### Overriding policies at runtime
+Pass `policy_overrides` in the `/run` request body to use a specific set of policies for that call instead of the persisted defaults:
+```json
+{
+  "graph": { ... },
+  "policy_overrides": [
+    { "policy_id": "custom", "name": "Custom PII", "type": "pii", "action": "redact", "enabled": true, "params": {} }
+  ]
+}
+```
+
+---
+
+## Tests
+```
+cd apps/api
+python -m pytest tests/test_observability.py tests/test_guardrails.py -v
+```
+Covers: trajectory scoring edge cases, feedback statistics, every policy module, and engine composition.
+

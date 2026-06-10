@@ -1,0 +1,8 @@
+{
+  "policy_id": "policy-injection-block",
+  "name": "Prompt Injection Block",
+  "type": "prompt_injection",
+  "action": "block",
+  "enabled": true,
+  "params": {}
+}

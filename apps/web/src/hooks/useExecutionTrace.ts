@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { ExecutionTrace } from "../types/api";
+import type { GuardrailResult } from "../types/observability";
 import type { FlowGraph } from "../types/flow";
 import { postRun } from "../services/apiClient";
 
@@ -9,6 +10,8 @@ export type RunStatus = "idle" | "running" | "success" | "error";
 
 export function useExecutionTrace() {
   const [trace, setTrace] = useState<ExecutionTrace | null>(null);
+  const [traceId, setTraceId] = useState<string | null>(null);
+  const [guardrailResult, setGuardrailResult] = useState<GuardrailResult | null>(null);
   const [status, setStatus] = useState<RunStatus>("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -21,8 +24,10 @@ export function useExecutionTrace() {
     setStatus("running");
     setError(null);
     try {
-      const result = await postRun(graph);
-      setTrace(result);
+      const result = await postRun({ graph });
+      setTrace(result.trace);
+      setTraceId(result.trace_id);
+      setGuardrailResult(result.guardrail_result);
       setStatus("success");
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -32,9 +37,11 @@ export function useExecutionTrace() {
 
   const clear = useCallback(() => {
     setTrace(null);
+    setTraceId(null);
+    setGuardrailResult(null);
     setStatus("idle");
     setError(null);
   }, []);
 
-  return { trace, status, error, run, clear };
+  return { trace, traceId, guardrailResult, status, error, run, clear };
 }

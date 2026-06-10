@@ -1,0 +1,8 @@
+{
+  "policy_id": "policy-hate-block",
+  "name": "Hate Block",
+  "type": "hate",
+  "action": "block",
+  "enabled": true,
+  "params": {}
+}
