@@ -58,37 +58,40 @@ export function EvaluationPage(): JSX.Element {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-zinc-950">
-      {/* Header */}
-      <header className="flex items-center gap-3 px-4 h-12 bg-zinc-900 border-b border-zinc-800 shrink-0">
-        <span className="text-teal-400 font-semibold text-sm tracking-wide">AI Harness Lab</span>
-        <div className="w-px h-4 bg-zinc-700" />
-        <span className="text-zinc-300 text-sm">Evaluation Workbench</span>
-        {activeDataset && (
-          <>
-            <div className="w-px h-4 bg-zinc-700" />
-            <span className="text-zinc-500 text-xs">Dataset: <span className="text-zinc-300">{activeDataset.name}</span> ({activeDataset.row_count} rows)</span>
-          </>
-        )}
-        {activeRun && (
-          <>
-            <div className="w-px h-4 bg-zinc-700" />
-            <span className="text-zinc-500 text-xs">Run: <span className="text-zinc-300 font-mono">{activeRun.run_id.slice(0, 8)}…</span></span>
-          </>
-        )}
-      </header>
-
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
       {/* Tab bar */}
-      <nav className="flex items-center gap-0.5 px-3 h-10 bg-zinc-900 border-b border-zinc-800 shrink-0">
+      <nav
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          padding: "0 20px",
+          borderBottom: "1px solid var(--border-color)",
+          backgroundColor: "var(--bg-secondary)",
+          height: 44,
+          flexShrink: 0,
+          overflowX: "auto",
+        }}
+      >
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-3 h-8 rounded text-xs font-medium transition-colors ${
-              tab === t.id
-                ? "bg-zinc-800 text-zinc-100"
-                : "text-zinc-500 hover:text-zinc-300"
-            }`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 0",
+              border: "none",
+              borderBottom: `2px solid ${tab === t.id ? "var(--accent-primary)" : "transparent"}`,
+              color: tab === t.id ? "var(--accent-primary)" : "var(--text-secondary)",
+              background: "transparent",
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "color 0.2s, border-color 0.2s",
+              whiteSpace: "nowrap",
+            }}
           >
             {t.icon}
             {t.label}
@@ -97,7 +100,7 @@ export function EvaluationPage(): JSX.Element {
       </nav>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div style={{ flex: 1, overflowY: "auto" }}>
         <div className="max-w-4xl mx-auto p-6">
           {tab === "dataset" && (
             <div className="space-y-4">

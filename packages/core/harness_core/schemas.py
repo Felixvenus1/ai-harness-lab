@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Any, Literal, Optional
+from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -29,6 +30,7 @@ class NodeConfig(BaseModel):
 
     # model
     provider: str = "mock"
+    model: str | None = None          # provider-specific model ID, e.g. "claude-haiku-4-5-20251001"
     system_prompt: str | None = None
     # Mock behaviour selector: valid_json | malformed_json | timeout | unsafe | echo
     response_mode: str = "valid_json"
@@ -42,6 +44,17 @@ class NodeConfig(BaseModel):
     # logger
     label: str | None = None
 
+    # router — list of {"source_handle": str, "expression": str, "label": str}
+    routes: list[dict[str, str]] | None = None
+
+    # merge
+    merge_strategy: Literal["first_wins", "all_required"] = "first_wins"
+
+    # loop
+    max_iterations: int = 3
+    exit_condition: str | None = None
+    loop_target: str | None = None  # node_id to feed back into
+
 
 class FlowNode(BaseModel):
     """A single node in the flow graph."""
@@ -51,11 +64,39 @@ class FlowNode(BaseModel):
     config: NodeConfig = Field(default_factory=NodeConfig)
 
 
-class FlowEdge(BaseModel):
-    """A directed connection from one node to another."""
+# ---------------------------------------------------------------------------
+# Connector (was FlowEdge) — now a first-class runtime object
+# ---------------------------------------------------------------------------
 
+
+class ConnectorPolicy(BaseModel):
+    """Runtime policy attached to a connector between two nodes."""
+
+    routing_rule: Literal["always", "on_success", "on_failure", "on_condition"] = "always"
+    # Python expression evaluated against {"passed": bool, "output": Any}
+    condition: str | None = None
+    retry_limit: int = 0
+    retry_delay_ms: int = 500
+    timeout_ms: int | None = None
+    cost_limit_usd: float | None = None
+    log_on_traverse: bool = False
+
+
+class ConnectorConfig(BaseModel):
+    """A directed edge between two nodes, carrying policy and routing metadata."""
+
+    id: str = Field(default_factory=lambda: str(uuid4()))
     source: str
     target: str
+    source_handle: str | None = None   # named output port (e.g. "on_success" on router)
+    target_handle: str | None = None   # named input port (e.g. "merge-a")
+    label: str | None = None
+    policy: ConnectorPolicy = Field(default_factory=ConnectorPolicy)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# FlowEdge kept as an alias so existing call-sites that use it still work.
+FlowEdge = ConnectorConfig
 
 
 class FlowGraph(BaseModel):
@@ -65,7 +106,7 @@ class FlowGraph(BaseModel):
     name: str | None = None
     initial_input: str = ""
     nodes: list[FlowNode]
-    edges: list[FlowEdge] = Field(default_factory=list)
+    edges: list[ConnectorConfig] = Field(default_factory=list)
 
 
 class ExecutionResult(BaseModel):

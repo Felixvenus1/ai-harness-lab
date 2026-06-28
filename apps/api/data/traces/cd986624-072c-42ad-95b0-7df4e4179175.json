@@ -1,0 +1,203 @@
+{
+  "trace_id": "cd986624-072c-42ad-95b0-7df4e4179175",
+  "run_id": null,
+  "flow_id": "test-merge",
+  "flow_name": "Test Merge",
+  "harness_version": "1.0",
+  "started_at": "2026-06-10T14:19:02.389647Z",
+  "ended_at": "2026-06-10T14:19:02.390647Z",
+  "total_latency_ms": 0.018,
+  "spans": [
+    {
+      "span_id": "72d18713-074d-4738-81b8-a81951a8eee2",
+      "trace_id": "cd986624-072c-42ad-95b0-7df4e4179175",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "input_guardrail",
+      "started_at": "2026-06-10T14:19:02.389647Z",
+      "ended_at": "2026-06-10T14:19:02.389647Z",
+      "latency_ms": 0.0,
+      "input": "test",
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": [
+          {
+            "policy_id": "policy-danger-block",
+            "policy_name": "Dangerous Intent Block",
+            "policy_type": "dangerous_intent",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-hate-block",
+            "policy_name": "Hate Block",
+            "policy_type": "hate",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-injection-block",
+            "policy_name": "Prompt Injection Block",
+            "policy_type": "prompt_injection",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-pii-warn",
+            "policy_name": "PII Warn",
+            "policy_type": "pii",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          }
+        ]
+      }
+    },
+    {
+      "span_id": "fa02a785-2713-491c-a5bd-a25137b949f0",
+      "trace_id": "cd986624-072c-42ad-95b0-7df4e4179175",
+      "parent_span_id": null,
+      "kind": "validation",
+      "name": "input_validator:input",
+      "started_at": "2026-06-10T14:19:02.389647Z",
+      "ended_at": "2026-06-10T14:19:02.389647Z",
+      "latency_ms": 0.0,
+      "input": "test",
+      "output": "test",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "2fd81b37-2d81-45ce-8e1b-b817bdc1f090",
+      "trace_id": "cd986624-072c-42ad-95b0-7df4e4179175",
+      "parent_span_id": null,
+      "kind": "general",
+      "name": "normaliser:normalizer",
+      "started_at": "2026-06-10T14:19:02.390647Z",
+      "ended_at": "2026-06-10T14:19:02.390647Z",
+      "latency_ms": 0.0,
+      "input": "test",
+      "output": "test",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "f90ec785-5a38-4218-a988-626686cde105",
+      "trace_id": "cd986624-072c-42ad-95b0-7df4e4179175",
+      "parent_span_id": null,
+      "kind": "general",
+      "name": "merge:merge",
+      "started_at": "2026-06-10T14:19:02.390647Z",
+      "ended_at": "2026-06-10T14:19:02.390647Z",
+      "latency_ms": 0.0,
+      "input": [
+        "test"
+      ],
+      "output": [
+        "test"
+      ],
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "159a2435-24e2-4ea6-a6d5-75008ff7937b",
+      "trace_id": "cd986624-072c-42ad-95b0-7df4e4179175",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "output_guardrail",
+      "started_at": "2026-06-10T14:19:02.390647Z",
+      "ended_at": "2026-06-10T14:19:02.390647Z",
+      "latency_ms": 0.0,
+      "input": [
+        "test"
+      ],
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": [
+          {
+            "policy_id": "policy-danger-block",
+            "policy_name": "Dangerous Intent Block",
+            "policy_type": "dangerous_intent",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-hate-block",
+            "policy_name": "Hate Block",
+            "policy_type": "hate",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-injection-block",
+            "policy_name": "Prompt Injection Block",
+            "policy_type": "prompt_injection",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-pii-warn",
+            "policy_name": "PII Warn",
+            "policy_type": "pii",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          }
+        ]
+      }
+    }
+  ],
+  "final_output": [
+    "test"
+  ],
+  "passed": true,
+  "trajectory_score": {
+    "total_steps": 5,
+    "tool_call_count": 0,
+    "retry_count": 0,
+    "failed_span_rate": 0.0,
+    "blocked_span_rate": 0.0,
+    "median_step_latency_ms": 0.0,
+    "p95_step_latency_ms": 0.0,
+    "sample_note": null
+  },
+  "guardrail_blocked": false,
+  "guardrail_summary": [],
+  "metadata": {}
+}

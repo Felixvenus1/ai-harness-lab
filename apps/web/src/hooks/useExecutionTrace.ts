@@ -6,7 +6,8 @@ import type { GuardrailResult } from "../types/observability";
 import type { FlowGraph } from "../types/flow";
 import { postRun } from "../services/apiClient";
 
-export type RunStatus = "idle" | "running" | "success" | "error";
+/** "success" = API responded AND trace.passed. "failed" = API ok but trace.passed=false. */
+export type RunStatus = "idle" | "running" | "success" | "failed" | "error";
 
 export function useExecutionTrace() {
   const [trace, setTrace] = useState<ExecutionTrace | null>(null);
@@ -28,7 +29,7 @@ export function useExecutionTrace() {
       setTrace(result.trace);
       setTraceId(result.trace_id);
       setGuardrailResult(result.guardrail_result);
-      setStatus("success");
+      setStatus(result.trace.passed ? "success" : "failed");
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setStatus("error");

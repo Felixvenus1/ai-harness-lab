@@ -1,144 +1,225 @@
-﻿/* Purpose: Define global styles, Tailwind v3 base, and ReactFlow dark-theme overrides. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design tokens ───────────────────────────────────────── */
 :root {
   color-scheme: dark;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
+
+  --bg-primary: #0f0f12;
+  --bg-secondary: #16161a;
+  --bg-tertiary: #1e1e24;
+  --bg-hover: #27272e;
+  --border-color: #2d2d35;
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1a7;
+  --text-tertiary: #717178;
+  --accent-primary: #16a34a;
+  --accent-primary-hover: #15803d;
+  --accent-secondary: #0891b2;
+  --accent-tertiary: #8b5cf6;
+  --status-success: #22c55e;
+  --status-warning: #eab308;
+  --status-error: #ef4444;
+  --status-info: #3b82f6;
+}
+
+body.light-mode {
+  color-scheme: light;
+  /* Warm slate-blue palette — avoids stark white glare */
+  --bg-primary: #f3f5f9;
+  --bg-secondary: #eaecf4;
+  --bg-tertiary: #dde2ee;
+  --bg-hover: #d0d7e8;
+  --border-color: #c0c9dc;
+  --text-primary: #141928;
+  --text-secondary: #3d4766;
+  --text-tertiary: #7480a0;
+  --accent-primary: #16a34a;
+  --accent-primary-hover: #15803d;
+  --accent-secondary: #0891b2;
+  --accent-tertiary: #8b5cf6;
 }
 
 body,
 #root {
   height: 100vh;
   overflow: hidden;
-  background-color: #09090b; /* zinc-950 */
-  color: #f4f4f5; /* zinc-100 */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.2s, color 0.2s;
 }
 
-/* ── ReactFlow dark overrides ─────────────────────────────── */
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-tertiary);
+}
+
+/* ─── Canvas density ───────────────────────────────────────── */
+/* Node base styles are in HarnessNode; density classes override them */
+.density-compact .react-flow__node-harnessNode .harness-node {
+  padding: 4px 8px !important;
+  min-width: 120px !important;
+}
+.density-compact .react-flow__node-harnessNode .harness-node-label {
+  font-size: 10px !important;
+}
+.density-compact .react-flow__node-harnessNode .harness-node-sublabel {
+  display: none !important;
+}
+
+.density-normal .react-flow__node-harnessNode .harness-node {
+  padding: 8px 12px !important;
+  min-width: 160px !important;
+}
+.density-normal .react-flow__node-harnessNode .harness-node-label {
+  font-size: 12px !important;
+}
+
+.density-comfortable .react-flow__node-harnessNode .harness-node {
+  padding: 12px 16px !important;
+  min-width: 200px !important;
+}
+.density-comfortable .react-flow__node-harnessNode .harness-node-label {
+  font-size: 13px !important;
+}
+.density-comfortable .react-flow__node-harnessNode .harness-node-sublabel {
+  font-size: 11px !important;
+}
+
+/* ─── Light-mode overrides for Tailwind zinc classes ───────── */
+/* Structural zinc overrides */
+body.light-mode .bg-zinc-950,
+body.light-mode .bg-zinc-950\/50 { background-color: #f3f5f9 !important; }
+body.light-mode .bg-zinc-900 { background-color: #eaecf4 !important; }
+body.light-mode .bg-zinc-800,
+body.light-mode .bg-zinc-800\/40,
+body.light-mode .bg-zinc-800\/30 { background-color: rgba(193,202,222,0.5) !important; }
+body.light-mode .bg-zinc-700 { background-color: #c0c9dc !important; }
+
+body.light-mode .border-zinc-800 { border-color: #c0c9dc !important; }
+body.light-mode .border-zinc-700 { border-color: #adb8cf !important; }
+body.light-mode .border-zinc-700\/50 { border-color: rgba(173,184,207,0.6) !important; }
+
+body.light-mode .text-zinc-100,
+body.light-mode .text-zinc-200 { color: #141928 !important; }
+body.light-mode .text-zinc-300 { color: #2d3a5e !important; }
+body.light-mode .text-zinc-400 { color: #4a5578 !important; }
+body.light-mode .text-zinc-500 { color: #6472a0 !important; }
+body.light-mode .text-zinc-600 { color: #8090b8 !important; }
+
+/* Hover state */
+body.light-mode .hover\:bg-zinc-700:hover,
+body.light-mode .hover\:bg-zinc-800:hover { background-color: #d0d7e8 !important; }
+
+/* Node card overrides — shift 950 dark tints → 50 light tints */
+body.light-mode .bg-blue-950\/50   { background-color: rgba(219,234,254,0.9) !important; }
+body.light-mode .border-blue-500\/60 { border-color: rgba(59,130,246,0.55) !important; }
+
+body.light-mode .bg-violet-950\/50 { background-color: rgba(237,233,254,0.9) !important; }
+body.light-mode .border-violet-500\/60 { border-color: rgba(139,92,246,0.55) !important; }
+
+body.light-mode .bg-teal-950\/50   { background-color: rgba(204,251,241,0.9) !important; }
+body.light-mode .border-teal-500\/60 { border-color: rgba(20,184,166,0.55) !important; }
+
+body.light-mode .bg-amber-950\/50  { background-color: rgba(254,243,199,0.9) !important; }
+body.light-mode .border-amber-500\/60 { border-color: rgba(245,158,11,0.6) !important; }
+
+body.light-mode .bg-orange-950\/50 { background-color: rgba(255,237,213,0.9) !important; }
+body.light-mode .border-orange-500\/60 { border-color: rgba(249,115,22,0.6) !important; }
+
+body.light-mode .bg-zinc-800\/50   { background-color: rgba(193,202,222,0.5) !important; }
+body.light-mode .border-zinc-500\/60 { border-color: rgba(113,128,150,0.5) !important; }
+
+/* Code / JSON blocks */
+body.light-mode .bg-zinc-950.rounded { background-color: #dde2ee !important; }
+body.light-mode pre.bg-zinc-950 { background-color: #dde2ee !important; color: #2d3a5e !important; }
+body.light-mode .text-zinc-400.font-mono { color: #3d4766 !important; }
+
+/* Toggle / switch */
+body.light-mode .bg-zinc-700 { background-color: #c0c9dc !important; }
+
+/* Trace pass/fail badges */
+body.light-mode .bg-emerald-950 { background-color: rgba(167,243,208,0.3) !important; }
+body.light-mode .bg-red-950      { background-color: rgba(254,202,202,0.3) !important; }
+body.light-mode .bg-red-950\/30  { background-color: rgba(254,202,202,0.25) !important; }
+body.light-mode .border-emerald-800 { border-color: rgba(52,211,153,0.5) !important; }
+body.light-mode .border-red-900, body.light-mode .border-red-800 { border-color: rgba(248,113,113,0.5) !important; }
+
+/* Accent — ensure teal refs in legacy components use accent */
+body.light-mode .text-teal-400 { color: var(--accent-primary) !important; }
+body.light-mode .border-teal-500,
+body.light-mode .focus\:border-teal-500:focus { border-color: var(--accent-primary) !important; }
+body.light-mode .bg-teal-600 { background-color: var(--accent-primary) !important; }
+body.light-mode .hover\:bg-teal-700:hover { background-color: var(--accent-primary-hover) !important; }
+
+/* ReactFlow minimap */
+body.light-mode .react-flow__minimap-mask { fill: rgba(243,245,249,0.75) !important; }
+
+/* ─── ReactFlow overrides ───────────────────────────────────── */
 .react-flow__pane {
-  background-color: #09090b;
+  background-color: var(--bg-primary);
 }
 
 .react-flow__background pattern circle {
-  fill: #27272a; /* zinc-800 dots */
+  fill: var(--border-color);
 }
 
 .react-flow__edge-path,
 .react-flow__edge-interaction {
-  stroke: #52525b; /* zinc-600 */
+  stroke: #52525b;
   stroke-width: 1.5;
 }
 
 .react-flow__edge.selected .react-flow__edge-path,
 .react-flow__edge:hover .react-flow__edge-path {
-  stroke: #2dd4bf; /* teal-400 */
+  stroke: var(--accent-primary);
 }
 
 .react-flow__connection-path {
-  stroke: #2dd4bf;
+  stroke: var(--accent-primary);
   stroke-width: 1.5;
 }
 
 .react-flow__controls {
-  background-color: #18181b;
-  border: 1px solid #3f3f46;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   overflow: hidden;
 }
 
 .react-flow__controls-button {
-  background-color: #18181b;
-  border-bottom: 1px solid #3f3f46;
-  color: #a1a1aa;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
 }
 
 .react-flow__controls-button:hover {
-  background-color: #27272a;
+  background-color: var(--bg-hover);
 }
 
 .react-flow__controls-button svg {
-  fill: #a1a1aa;
+  fill: var(--text-secondary);
 }
 
 .react-flow__minimap {
-  background-color: #18181b;
-  border: 1px solid #3f3f46;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
 }
 
 .react-flow__minimap-mask {
-  fill: rgba(9, 9, 11, 0.7);
+  fill: rgba(15, 15, 18, 0.7);
 }
-
-
-:root {
-  color-scheme: dark;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-}
-
-body,
-#root {
-  height: 100vh;
-  overflow: hidden;
-  background-color: #09090b; /* zinc-950 */
-  color: #f4f4f5; /* zinc-100 */
-}
-
-/* ── ReactFlow dark overrides ─────────────────────────────── */
-.react-flow__pane {
-  background-color: #09090b;
-}
-
-.react-flow__background pattern circle {
-  fill: #27272a; /* zinc-800 dots */
-}
-
-.react-flow__edge-path,
-.react-flow__edge-interaction {
-  stroke: #52525b; /* zinc-600 */
-  stroke-width: 1.5;
-}
-
-.react-flow__edge.selected .react-flow__edge-path,
-.react-flow__edge:hover .react-flow__edge-path {
-  stroke: #2dd4bf; /* teal-400 */
-}
-
-.react-flow__connection-path {
-  stroke: #2dd4bf;
-  stroke-width: 1.5;
-}
-
-.react-flow__controls {
-  background-color: #18181b;
-  border: 1px solid #3f3f46;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.react-flow__controls-button {
-  background-color: #18181b;
-  border-bottom: 1px solid #3f3f46;
-  color: #a1a1aa;
-}
-
-.react-flow__controls-button:hover {
-  background-color: #27272a;
-}
-
-.react-flow__controls-button svg {
-  fill: #a1a1aa;
-}
-
-.react-flow__minimap {
-  background-color: #18181b;
-  border: 1px solid #3f3f46;
-  border-radius: 6px;
-}
-
-.react-flow__minimap-mask {
-  fill: rgba(9, 9, 11, 0.7);
-}
-

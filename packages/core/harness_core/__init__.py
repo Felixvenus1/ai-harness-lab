@@ -2,6 +2,8 @@
 from harness_core.node_types import NodeType
 from harness_core.provider import ProviderBase
 from harness_core.schemas import (
+    ConnectorConfig,
+    ConnectorPolicy,
     ExecutionResult,
     ExecutionTrace,
     FlowEdge,
@@ -17,6 +19,8 @@ __all__ = [
     "FlowNode",
     "FlowEdge",
     "FlowGraph",
+    "ConnectorConfig",
+    "ConnectorPolicy",
     "ExecutionResult",
     "ExecutionTrace",
 ]

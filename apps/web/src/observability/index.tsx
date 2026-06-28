@@ -19,25 +19,39 @@ export function ObservabilityPage(): JSX.Element {
   const [tab, setTab] = useState<Tab>("traces");
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-zinc-950">
-      {/* Header */}
-      <header className="flex items-center gap-3 px-4 h-12 bg-zinc-900 border-b border-zinc-800 shrink-0">
-        <span className="text-teal-400 font-semibold text-sm tracking-wide">AI Harness Lab</span>
-        <div className="w-px h-4 bg-zinc-700" />
-        <span className="text-zinc-300 text-sm">Observability</span>
-      </header>
-
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
       {/* Tab bar */}
-      <nav className="flex gap-1 px-4 pt-2 pb-0 bg-zinc-900 border-b border-zinc-800 shrink-0">
+      <nav
+        style={{
+          display: "flex",
+          gap: 16,
+          padding: "0 20px",
+          borderBottom: "1px solid var(--border-color)",
+          backgroundColor: "var(--bg-secondary)",
+          height: 44,
+          alignItems: "center",
+          flexShrink: 0,
+        }}
+      >
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-3 py-2 text-xs rounded-t border-b-2 transition-colors ${
-              tab === t.id
-                ? "border-teal-500 text-teal-400"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
-            }`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 0",
+              color: tab === t.id ? "var(--accent-primary)" : "var(--text-secondary)",
+              background: "transparent",
+              border: "none",
+              borderBottom: `2px solid ${tab === t.id ? "var(--accent-primary)" : "transparent"}`,
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "color 0.2s, border-color 0.2s",
+              whiteSpace: "nowrap",
+            }}
           >
             {t.icon}
             {t.label}
@@ -46,7 +60,7 @@ export function ObservabilityPage(): JSX.Element {
       </nav>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">
+      <div style={{ flex: 1, overflow: "hidden" }}>
         {tab === "traces" && <TracesTab />}
         {tab === "feedback" && <FeedbackTab />}
         {tab === "guardrails" && <GuardrailsTab />}

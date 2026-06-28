@@ -1,0 +1,246 @@
+{
+  "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+  "run_id": null,
+  "flow_id": null,
+  "flow_name": "Strict Schema",
+  "harness_version": "1.0",
+  "started_at": "2026-06-10T14:33:01.866078Z",
+  "ended_at": "2026-06-10T14:33:01.869025Z",
+  "total_latency_ms": 1.38,
+  "spans": [
+    {
+      "span_id": "7112f2cd-5b33-412b-a193-3059ac6511b8",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "input_guardrail",
+      "started_at": "2026-06-10T14:33:01.866078Z",
+      "ended_at": "2026-06-10T14:33:01.866078Z",
+      "latency_ms": 0.0,
+      "input": "What is the answer to life?",
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": [
+          {
+            "policy_id": "policy-danger-block",
+            "policy_name": "Dangerous Intent Block",
+            "policy_type": "dangerous_intent",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-hate-block",
+            "policy_name": "Hate Block",
+            "policy_type": "hate",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-injection-block",
+            "policy_name": "Prompt Injection Block",
+            "policy_type": "prompt_injection",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-pii-warn",
+            "policy_name": "PII Warn",
+            "policy_type": "pii",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          }
+        ]
+      }
+    },
+    {
+      "span_id": "27b7fa27-584d-42bf-acc8-90acd7466769",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "validation",
+      "name": "input_validator:validator",
+      "started_at": "2026-06-10T14:33:01.866078Z",
+      "ended_at": "2026-06-10T14:33:01.866078Z",
+      "latency_ms": 0.0,
+      "input": "What is the answer to life?",
+      "output": "What is the answer to life?",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "d8a9437a-7f19-4d39-9345-f5e201c59099",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "general",
+      "name": "normaliser:normaliser",
+      "started_at": "2026-06-10T14:33:01.866078Z",
+      "ended_at": "2026-06-10T14:33:01.866078Z",
+      "latency_ms": 0.0,
+      "input": "What is the answer to life?",
+      "output": "What is the answer to life?",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "3dff6da4-5a80-46e7-add4-7d42d1aee628",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "model_call",
+      "name": "model:model",
+      "started_at": "2026-06-10T14:33:01.866078Z",
+      "ended_at": "2026-06-10T14:33:01.867009Z",
+      "latency_ms": 0.931,
+      "input": "What is the answer to life?",
+      "output": "{\"answer\": \"42\", \"confidence\": 0.92}",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "39428140-4101-4056-9ebb-cf58388820f2",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "validation",
+      "name": "schema_validator:schema_val",
+      "started_at": "2026-06-10T14:33:01.867009Z",
+      "ended_at": "2026-06-10T14:33:01.868035Z",
+      "latency_ms": 1.026,
+      "input": "{\"answer\": \"42\", \"confidence\": 0.92}",
+      "output": {
+        "answer": "42",
+        "confidence": 0.92
+      },
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "72a94e21-9350-4ce1-818e-1fed146945d1",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "general",
+      "name": "logger:logger",
+      "started_at": "2026-06-10T14:33:01.868035Z",
+      "ended_at": "2026-06-10T14:33:01.868035Z",
+      "latency_ms": 0.0,
+      "input": {
+        "answer": "42",
+        "confidence": 0.92
+      },
+      "output": {
+        "answer": "42",
+        "confidence": 0.92
+      },
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "1da32b27-411c-41ad-9274-657621704d04",
+      "trace_id": "4e17c5b4-dd93-4508-93d7-5e581afe3b72",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "output_guardrail",
+      "started_at": "2026-06-10T14:33:01.868035Z",
+      "ended_at": "2026-06-10T14:33:01.868035Z",
+      "latency_ms": 0.0,
+      "input": {
+        "answer": "42",
+        "confidence": 0.92
+      },
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": [
+          {
+            "policy_id": "policy-danger-block",
+            "policy_name": "Dangerous Intent Block",
+            "policy_type": "dangerous_intent",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-hate-block",
+            "policy_name": "Hate Block",
+            "policy_type": "hate",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-injection-block",
+            "policy_name": "Prompt Injection Block",
+            "policy_type": "prompt_injection",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-pii-warn",
+            "policy_name": "PII Warn",
+            "policy_type": "pii",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          }
+        ]
+      }
+    }
+  ],
+  "final_output": {
+    "answer": "42",
+    "confidence": 0.92
+  },
+  "passed": true,
+  "trajectory_score": {
+    "total_steps": 7,
+    "tool_call_count": 0,
+    "retry_count": 0,
+    "failed_span_rate": 0.0,
+    "blocked_span_rate": 0.0,
+    "median_step_latency_ms": 0.0,
+    "p95_step_latency_ms": 1.026,
+    "sample_note": null
+  },
+  "guardrail_blocked": false,
+  "guardrail_summary": [],
+  "metadata": {}
+}

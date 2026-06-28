@@ -1,0 +1,159 @@
+{
+  "trace_id": "b7ab7c92-a8c0-4908-acbe-0a770e8b0a30",
+  "run_id": null,
+  "flow_id": "test-openrouter",
+  "flow_name": "Test OpenRouter",
+  "harness_version": "1.0",
+  "started_at": "2026-06-10T14:18:46.435275Z",
+  "ended_at": "2026-06-10T14:18:46.436228Z",
+  "total_latency_ms": 0.261,
+  "spans": [
+    {
+      "span_id": "798da113-9b24-4b0b-b40c-5ac702c30d5a",
+      "trace_id": "b7ab7c92-a8c0-4908-acbe-0a770e8b0a30",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "input_guardrail",
+      "started_at": "2026-06-10T14:18:46.435275Z",
+      "ended_at": "2026-06-10T14:18:46.435275Z",
+      "latency_ms": 0.0,
+      "input": "Hello",
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": [
+          {
+            "policy_id": "policy-danger-block",
+            "policy_name": "Dangerous Intent Block",
+            "policy_type": "dangerous_intent",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-hate-block",
+            "policy_name": "Hate Block",
+            "policy_type": "hate",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-injection-block",
+            "policy_name": "Prompt Injection Block",
+            "policy_type": "prompt_injection",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-pii-warn",
+            "policy_name": "PII Warn",
+            "policy_type": "pii",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          }
+        ]
+      }
+    },
+    {
+      "span_id": "8e1cadb1-ba9a-4374-87f5-05ddfac4efdb",
+      "trace_id": "b7ab7c92-a8c0-4908-acbe-0a770e8b0a30",
+      "parent_span_id": null,
+      "kind": "model_call",
+      "name": "model:model",
+      "started_at": "2026-06-10T14:18:46.435275Z",
+      "ended_at": "2026-06-10T14:18:46.436228Z",
+      "latency_ms": 0.953,
+      "input": "Hello",
+      "output": "<openrouter: OPENROUTER_API_KEY not set>",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {}
+    },
+    {
+      "span_id": "75633597-ef07-4f22-acec-83068b4e91ef",
+      "trace_id": "b7ab7c92-a8c0-4908-acbe-0a770e8b0a30",
+      "parent_span_id": null,
+      "kind": "guardrail",
+      "name": "output_guardrail",
+      "started_at": "2026-06-10T14:18:46.436228Z",
+      "ended_at": "2026-06-10T14:18:46.436228Z",
+      "latency_ms": 0.0,
+      "input": "<openrouter: OPENROUTER_API_KEY not set>",
+      "output": "allow",
+      "status": "success",
+      "error": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "metadata": {
+        "decisions": [
+          {
+            "policy_id": "policy-danger-block",
+            "policy_name": "Dangerous Intent Block",
+            "policy_type": "dangerous_intent",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-hate-block",
+            "policy_name": "Hate Block",
+            "policy_type": "hate",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-injection-block",
+            "policy_name": "Prompt Injection Block",
+            "policy_type": "prompt_injection",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          },
+          {
+            "policy_id": "policy-pii-warn",
+            "policy_name": "PII Warn",
+            "policy_type": "pii",
+            "action_taken": "allow",
+            "triggered": false,
+            "reason": null,
+            "redacted_text": null
+          }
+        ]
+      }
+    }
+  ],
+  "final_output": "<openrouter: OPENROUTER_API_KEY not set>",
+  "passed": true,
+  "trajectory_score": {
+    "total_steps": 3,
+    "tool_call_count": 0,
+    "retry_count": 0,
+    "failed_span_rate": 0.0,
+    "blocked_span_rate": 0.0,
+    "median_step_latency_ms": 0.0,
+    "p95_step_latency_ms": 0.953,
+    "sample_note": "p95 latency estimated from max (3 spans; reliable p95 needs ≥20)."
+  },
+  "guardrail_blocked": false,
+  "guardrail_summary": [],
+  "metadata": {}
+}

@@ -1,4 +1,4 @@
-﻿// Purpose: Provide the ReactFlow canvas with drag-drop, node interaction, and dark styling.
+// Purpose: Provide the ReactFlow canvas with drag-drop, node/edge interaction, and dark styling.
 
 import { useRef, useCallback, type JSX } from "react";
 import ReactFlow, {
@@ -6,6 +6,7 @@ import ReactFlow, {
   Controls,
   MiniMap,
   BackgroundVariant,
+  MarkerType,
   type Node,
   type Edge,
   type OnNodesChange,
@@ -14,20 +15,17 @@ import ReactFlow, {
   type ReactFlowInstance,
 } from "reactflow";
 import { HarnessNode } from "../nodes/HarnessNode";
-import { NODE_META } from "../config/nodeConfig";
+import { ConnectorEdge } from "./ConnectorEdge";
+import { NODE_META, NODE_MINIMAP_COLORS } from "../config/nodeConfig";
 import type { NodeType, NodeConfig } from "../types/flow";
 
-// Defined outside the component so React Flow doesn't recreate it on each render.
+// Defined outside the component so React Flow doesn't recreate them on each render.
 const NODE_TYPES = { harnessNode: HarnessNode };
+const EDGE_TYPES = { connectorEdge: ConnectorEdge };
 
-// Hex colours per node type for the minimap.
-const NODE_COLORS: Record<NodeType, string> = {
-  input_validator: "#1d4ed8",
-  normaliser: "#7c3aed",
-  model: "#0d9488",
-  schema_validator: "#b45309",
-  fallback: "#c2410c",
-  logger: "#52525b",
+const DEFAULT_EDGE_OPTIONS = {
+  type: "connectorEdge",
+  markerEnd: { type: MarkerType.ArrowClosed, color: "#52525b", width: 14, height: 14 },
 };
 
 interface CanvasShellProps {
@@ -37,8 +35,10 @@ interface CanvasShellProps {
   onEdgesChange: OnEdgesChange;
   onConnect: (connection: Connection) => void;
   onNodeClick: (nodeId: string) => void;
+  onEdgeClick: (edgeId: string) => void;
   onPaneClick: () => void;
   addHarnessNode: (type: NodeType, config: NodeConfig, pos: { x: number; y: number }) => void;
+  density?: "compact" | "normal" | "comfortable";
 }
 
 export function CanvasShell({
@@ -48,8 +48,10 @@ export function CanvasShell({
   onEdgesChange,
   onConnect,
   onNodeClick,
+  onEdgeClick,
   onPaneClick,
   addHarnessNode,
+  density = "normal",
 }: CanvasShellProps): JSX.Element {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const rfInstanceRef = useRef<ReactFlowInstance | null>(null);
@@ -72,7 +74,7 @@ export function CanvasShell({
   return (
     <div
       ref={wrapperRef}
-      className="flex-1 h-full"
+      className={`flex-1 h-full density-${density}`}
       onDrop={onDrop}
       onDragOver={(e) => e.preventDefault()}
     >
@@ -80,10 +82,13 @@ export function CanvasShell({
         nodes={nodes}
         edges={edges}
         nodeTypes={NODE_TYPES}
+        edgeTypes={EDGE_TYPES}
+        defaultEdgeOptions={DEFAULT_EDGE_OPTIONS}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={(_, node) => onNodeClick(node.id)}
+        onEdgeClick={(_, edge) => onEdgeClick(edge.id)}
         onPaneClick={onPaneClick}
         onInit={(instance) => {
           rfInstanceRef.current = instance;
@@ -97,12 +102,12 @@ export function CanvasShell({
         <Background
           variant={BackgroundVariant.Dots}
           gap={20}
-          size={1}
-          color="#27272a"
+          size={1.2}
+          color="var(--border-color)"
         />
         <Controls />
         <MiniMap
-          nodeColor={(n) => NODE_COLORS[n.data?.nodeType as NodeType] ?? "#3f3f46"}
+          nodeColor={(n) => NODE_MINIMAP_COLORS[n.data?.nodeType as NodeType] ?? "#3f3f46"}
           maskColor="rgba(9,9,11,0.75)"
         />
       </ReactFlow>

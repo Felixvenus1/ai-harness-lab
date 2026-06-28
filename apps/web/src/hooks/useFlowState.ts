@@ -1,9 +1,9 @@
-﻿// Purpose: Manage ReactFlow canvas state with localStorage persistence and flow operations.
+// Purpose: Manage ReactFlow canvas state with localStorage persistence and flow operations.
 
 import { useState, useEffect, useCallback } from "react";
-import { useNodesState, useEdgesState, addEdge } from "reactflow";
+import { useNodesState, useEdgesState } from "reactflow";
 import type { Node, Edge, Connection } from "reactflow";
-import type { NodeType, NodeConfig, FlowGraph } from "../types/flow";
+import type { NodeType, NodeConfig, FlowGraph, ConnectorConfig } from "../types/flow";
 
 const STORAGE_KEY = "aiharness:flow";
 
@@ -14,10 +14,35 @@ interface PersistedState {
   flowName: string;
 }
 
+/** Coerce any edge (old bare {source,target} format or new ConnectorConfig) into a typed edge. */
+function normalizeEdge(edge: Edge): Edge<ConnectorConfig> {
+  const id = edge.id || `${edge.source}→${edge.target}`;
+  return {
+    ...edge,
+    id,
+    type: "connectorEdge",
+    data: edge.data ?? {
+      id,
+      source: edge.source,
+      target: edge.target,
+      source_handle: edge.sourceHandle ?? undefined,
+      target_handle: edge.targetHandle ?? undefined,
+      policy: { routing_rule: "always" },
+      metadata: {},
+    },
+  };
+}
+
 function loadFromStorage(): Partial<PersistedState> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Partial<PersistedState>) : {};
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Partial<PersistedState>;
+    // Normalize edges so old saved flows get ConnectorConfig data.
+    if (parsed.edges) {
+      parsed.edges = parsed.edges.map(normalizeEdge);
+    }
+    return parsed;
   } catch {
     return {};
   }
@@ -28,6 +53,7 @@ export function useFlowState() {
   const [nodes, setNodes, onNodesChange] = useNodesState(saved.nodes ?? []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(saved.edges ?? []);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [initialInput, setInitialInput] = useState(saved.initialInput ?? "");
   const [flowName, setFlowName] = useState(saved.flowName ?? "Untitled Flow");
 
@@ -40,7 +66,27 @@ export function useFlowState() {
   }, [nodes, edges, initialInput, flowName]);
 
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
+    (connection: Connection) => {
+      const newId = crypto.randomUUID();
+      const newEdge: Edge<ConnectorConfig> = {
+        id: newId,
+        source: connection.source!,
+        target: connection.target!,
+        sourceHandle: connection.sourceHandle ?? undefined,
+        targetHandle: connection.targetHandle ?? undefined,
+        type: "connectorEdge",
+        data: {
+          id: newId,
+          source: connection.source!,
+          target: connection.target!,
+          source_handle: connection.sourceHandle ?? undefined,
+          target_handle: connection.targetHandle ?? undefined,
+          policy: { routing_rule: "always" },
+          metadata: {},
+        },
+      };
+      setEdges((eds) => [...eds, newEdge]);
+    },
     [setEdges],
   );
 
@@ -53,6 +99,19 @@ export function useFlowState() {
     [setNodes],
   );
 
+  const updateEdgeData = useCallback(
+    (edgeId: string, patch: Partial<ConnectorConfig>) => {
+      setEdges((eds) =>
+        eds.map((e) => {
+          if (e.id !== edgeId) return e;
+          const merged: ConnectorConfig = { ...e.data, ...patch } as ConnectorConfig;
+          return { ...e, data: merged };
+        }),
+      );
+    },
+    [setEdges],
+  );
+
   const deleteNode = useCallback(
     (id: string) => {
       setNodes((nds) => nds.filter((n) => n.id !== id));
@@ -60,6 +119,14 @@ export function useFlowState() {
       setSelectedNodeId((prev) => (prev === id ? null : prev));
     },
     [setNodes, setEdges],
+  );
+
+  const deleteEdge = useCallback(
+    (id: string) => {
+      setEdges((eds) => eds.filter((e) => e.id !== id));
+      setSelectedEdgeId((prev) => (prev === id ? null : prev));
+    },
+    [setEdges],
   );
 
   const addHarnessNode = useCallback(
@@ -78,10 +145,11 @@ export function useFlowState() {
   const loadFlow = useCallback(
     (rfNodes: Node[], rfEdges: Edge[], name: string, input: string) => {
       setNodes(structuredClone(rfNodes));
-      setEdges(structuredClone(rfEdges));
+      setEdges(structuredClone(rfEdges).map(normalizeEdge));
       setFlowName(name);
       setInitialInput(input);
       setSelectedNodeId(null);
+      setSelectedEdgeId(null);
     },
     [setNodes, setEdges],
   );
@@ -95,7 +163,19 @@ export function useFlowState() {
         type: n.data.nodeType as NodeType,
         config: n.data.config as NodeConfig,
       })),
-      edges: edges.map((e) => ({ source: e.source, target: e.target })),
+      edges: edges.map((e) => {
+        const d = e.data as ConnectorConfig | undefined;
+        return {
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          source_handle: e.sourceHandle ?? d?.source_handle ?? undefined,
+          target_handle: e.targetHandle ?? d?.target_handle ?? undefined,
+          label: d?.label,
+          policy: d?.policy ?? { routing_rule: "always" },
+          metadata: d?.metadata ?? {},
+        };
+      }),
     }),
     [nodes, edges, flowName, initialInput],
   );
@@ -109,12 +189,16 @@ export function useFlowState() {
     onConnect,
     selectedNodeId,
     setSelectedNodeId,
+    selectedEdgeId,
+    setSelectedEdgeId,
     initialInput,
     setInitialInput,
     flowName,
     setFlowName,
     updateNodeConfig,
+    updateEdgeData,
     deleteNode,
+    deleteEdge,
     addHarnessNode,
     loadFlow,
     buildApiGraph,

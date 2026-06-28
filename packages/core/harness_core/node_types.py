@@ -9,3 +9,6 @@ class NodeType(str, Enum):
     SCHEMA_VALIDATOR = "schema_validator"
     FALLBACK = "fallback"
     LOGGER = "logger"
+    ROUTER = "router"
+    MERGE = "merge"
+    LOOP = "loop"
