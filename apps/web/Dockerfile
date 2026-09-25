@@ -1,8 +1,9 @@
-﻿# Purpose: Build and run the web app container in local development.
+# Purpose: Build and run the web app container in local development.
 FROM node:22-alpine
-WORKDIR /app
-COPY tsconfig.base.json .
+# Keep the repo layout so tsconfig "extends: ../../tsconfig.base.json" resolves.
+WORKDIR /repo/apps/web
+COPY tsconfig.base.json /repo/
 COPY apps/web .
-RUN npm install
+RUN npm ci
 EXPOSE 5173
-CMD ["sh", "-c", "npm run dev"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

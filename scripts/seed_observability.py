@@ -9,8 +9,9 @@ import sys
 import os
 
 # Make sure the packages are importable.
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "apps", "api"))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "packages", "core"))
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_REPO_ROOT, "apps", "api"))
+sys.path.insert(0, os.path.join(_REPO_ROOT, "packages", "core"))
 
 import uuid
 from datetime import datetime, timezone, timedelta

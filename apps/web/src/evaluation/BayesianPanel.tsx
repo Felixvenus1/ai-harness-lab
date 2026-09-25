@@ -10,6 +10,8 @@ interface PosteriorInfo {
   hpdr_95: [number, number];
   successes: number;
   trials: number;
+  post_alpha?: number;
+  post_beta?: number;
 }
 
 interface BayesianPanelProps {
